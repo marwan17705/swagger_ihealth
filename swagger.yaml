@@ -474,7 +474,7 @@ paths:
         - admin
       summary: ตั้งค่าอุปกรณ์การทำงาน 1 ตัว
       description: |
-        ตั้งค่าอุปกรณ์อุปกรณ์ 1 ตัว  <br>
+        ตั้งค่าอุปกรณ์ 1 ตัว  <br>
       security:
         - tokenWebhook: []
       responses:
