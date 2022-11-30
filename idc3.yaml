@@ -1,0 +1,108 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: domain ที่เก็บข้อมูลไฟฟ้าใน IDC3 
+    url: https://ds.nexpie.io
+info:
+  description: This is a simple API for IDC3 data center ดูเอกสารเพิ่มเติม https://docs-v2.nexpie.io/device-api.html#data-store-api
+  version: "1.0.0"
+  title: Simple API for IDC3 data center
+  contact:
+    email: marwan17705@gmail.com
+tags:
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /feed/api/v1/datapoints/query: 
+    post: 
+      tags:
+        - developers
+      summary: searches energy consumption per day
+      description: |
+        By passing in the appropriate options, you can search for
+        available energy consumption in the IDC3 data center
+      security:
+        - bearerAuthNexpie: []
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              example: "{\"queries\":[{\"sample_size\":848,\"results\":[{\"name\":\"278e3e5d-8699-4fe8-927c-ee2ac0ede3f1\",\"group_by\":[{\"name\":\"tag\",\"tags\":[\"attr\"],\"group\":{\"attr\":\"thailand_post.value\"}},{\"name\":\"type\",\"type\":\"number\"}],\"tags\":{\"attr\":[\"thailand_post.value\"]},\"values\":[[1669557504032,93.62499999999977]]}]}]}"
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad Gateway  
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/energyConsumptionPerDay'
+        description: Inventory item to add
+components:
+  schemas:
+    energyConsumptionPerDay:
+      type: object
+      example: "{\"start_relative\":{\"value\":876,\"unit\":\"minutes\"},\"metrics\":[{\"name\":\"278e3e5d-8699-4fe8-927c-ee2ac0ede3f1\",\"tags\":{\"attr\":\"thailand_post.value\"},\"limit\":3600,\"group_by\":[{\"name\":\"tag\",\"tags\":[\"attr\"]}],\"aggregators\":[{\"name\":\"sum\",\"sampling\":{\"value\":\"1\",\"unit\":\"days\"}}]}]}"
+      required:
+        - start_relative
+        - metrics
+      properties:
+        start_relative:
+          type: object
+          properties:
+            value:
+              type: integer
+            unit:
+              type: string
+          description: ระยะเวลาเริ่มต้นในการร้องขอข้อมูลเทียบกับปัจจุบัน เช่น 1 วันทีผ่านมา  50 นาที ที่ผ่านมา เป็นต้น
+        metrics:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: 
+                  -278e3e5d-8699-4fe8-927c-ee2ac0ede3f1 กรณีลูกค้า thailand post 
+                  <br>-a2554359-a685-4b00-90f1-6670e6727ee1 กรณีพิจารณา phase 
+              tags:
+                type: object
+                properties:
+                  attr:
+                    type: string
+                    description: 
+                     -attr ประกอบด้วย thailand_post.value , ['idc3-02-05-14'].value , ['idc3-02-05-15'].value , ['idc3-02-05-16'].value , ['idc3-02-05-17'].value กรณีลูกค้า thailand post 
+                     <br>-attr ประกอบด้วย idc3_phase_1.value และ idc3_phase_2.value กรณีพิจารณา phase 
+              limit:
+                type: integer
+              group_by:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    tags:
+                      type: array
+                      items: {}
+                      example:
+                        - attr
+              aggregators:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    sampling:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                        unit:
+                          type: string
+                    name:
+                      type: string
+  securitySchemes:
+    bearerAuthNexpie:     
+      type: http
+      scheme: bearer
