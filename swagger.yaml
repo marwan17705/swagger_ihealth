@@ -468,8 +468,38 @@ paths:
           example: f041dece-af13-4567-987f-b18b70c08808
           schema:
             type: string
-      
-
+  /api/v2/api_server/device/config:
+    post: 
+      tags:
+        - admin
+      summary: ตั้งค่าอุปกรณ์ 1 ตัว
+      description: |
+        ตั้งค่าอุปกรณ์อุปกรณ์ 1 ตัว  <br>
+      security:
+        - tokenWebhook: []
+      responses:
+        '200':
+          description: search results matching criteria
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad Gateway  
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/configDevice'
+            example: 
+              "event": "write_command"
+              "dest": 
+                  "imei": "865513041165769"
+              config:
+                working_mode: "08"
+                gps_enable: 1
+                gps_interval: 15
+                health_interval: 60
+                fall_down_enable: 1
+              
 components:
   schemas:
     basic:
@@ -575,6 +605,32 @@ components:
           type: string
         brand:
           type: string
+    configDevice:
+      type: object
+      required: 
+        - event
+        - dest
+      properties:  
+        event:
+          type: string
+        dest:
+          type: object
+          properties:
+            imei:
+              type: string
+        config:
+          type: object
+          properties:  
+            working_mode:
+              type: string
+            gps_enable:
+              type: integer
+            gps_interval:
+              type: integer
+            health_interval:
+              type: integer
+            fall_down_enable:
+              type: integer          
   securitySchemes:
     tokenWebhook:     
       type: apiKey
